@@ -20,7 +20,7 @@ public class BankAccountService {
         this.authToken = authToken;
     }
 
-    private BigDecimal getBalance(int id) {
+    public BigDecimal getBalance(Long id) {
         BigDecimal balance = null;
         try {
             ResponseEntity<BankAccount> response = restTemplate.exchange(API_BASE_URL + id, HttpMethod.GET, makeAuthEntity(), BankAccount.class);
