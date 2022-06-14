@@ -20,19 +20,46 @@ public class BankAccountService {
         this.authToken = authToken;
     }
 
-    public BigDecimal getBalance(Long id) {
-        BigDecimal balance = null;
+    public BankAccount get(Long id) {
+        BankAccount account = null;
         try {
             ResponseEntity<BankAccount> response = restTemplate.exchange(API_BASE_URL + id, HttpMethod.GET, makeAuthEntity(), BankAccount.class);
-            balance = response.getBody().getBalance();
+            account = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
-        return balance;
+        return account;
     }
 
+    public boolean update(BankAccount account) {
+        boolean success = false;
+        try {
+            restTemplate.put(API_BASE_URL + account.getId(), makeAccountEntity(account));
+            success = true;
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return success;
+    }
 
-    private HttpEntity<BankAccount> makeAuctionEntity(BankAccount account) {
+//    public boolean transfer(Long id, Long recipientId, BigDecimal amount) {
+//        boolean success = false;
+//        try {
+//            ResponseEntity<BankAccount> response = restTemplate.exchange(API_BASE_URL + id, HttpMethod.GET, makeAuthEntity(), BankAccount.class);
+//        } catch (RestClientResponseException | ResourceAccessException e) {
+//            BasicLogger.log(e.getMessage());
+//        }
+//        try {
+//            restTemplate.put(API_BASE_URL + id + "/transfer?recipient=" + recipientId + "&amount=" + amount, HttpMethod.PUT, makeAuthEntity(), Void.class);
+//            success = true;
+//        } catch (RestClientResponseException | ResourceAccessException e) {
+//            BasicLogger.log(e.getMessage());
+//        }
+//        return success;
+//    }
+
+
+    private HttpEntity<BankAccount> makeAccountEntity(BankAccount account) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(authToken);

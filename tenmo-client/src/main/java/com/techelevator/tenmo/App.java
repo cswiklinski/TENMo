@@ -1,10 +1,13 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.BankAccount;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.BankAccountService;
 import com.techelevator.tenmo.services.ConsoleService;
+
+import java.math.BigDecimal;
 
 public class App {
 
@@ -88,7 +91,7 @@ public class App {
 
 	private void viewCurrentBalance() {
 		// TODO Auto-generated method stub
-		System.out.println(accountService.getBalance(currentUser.getUser().getId()));
+		System.out.println(accountService.get(currentUser.getUser().getId()).getBalance());
 	}
 
 	private void viewTransferHistory() {
@@ -103,7 +106,19 @@ public class App {
 
 	private void sendBucks() {
 		// TODO Auto-generated method stub
-		
+        long recipientId = (long)consoleService.promptForInt("Enter the ID of the user you want to transfer to: ");
+        BigDecimal amount = consoleService.promptForBigDecimal("Enter the amount you would like to transfer: ");
+        BankAccount sender = accountService.get(currentUser.getUser().getId());
+        BankAccount receiver = accountService.get(recipientId);
+        if (sender.getBalance().compareTo(amount) >= 0) {
+            sender.setBalance(sender.getBalance().subtract(amount));
+            accountService.update(sender);
+
+            receiver.setBalance(receiver.getBalance().add(amount));
+            accountService.update(receiver);
+            System.out.println(sender.toString());
+            System.out.println(receiver.toString());
+        }
 	}
 
 	private void requestBucks() {
