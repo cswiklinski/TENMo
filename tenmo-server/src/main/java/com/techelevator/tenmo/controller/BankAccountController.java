@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/account/")
@@ -18,6 +19,11 @@ public class BankAccountController {
 
     public BankAccountController(BankAccountDao accountDao) {
         this.accountDao = accountDao;
+    }
+
+    @GetMapping("")
+    public List<String> listAccounts() {
+        return accountDao.listAccounts();
     }
 
     @GetMapping("{id}")

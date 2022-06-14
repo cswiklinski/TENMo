@@ -8,6 +8,9 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BankAccountService {
 
@@ -18,6 +21,17 @@ public class BankAccountService {
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
+    }
+
+    public List<String> listAccounts() {
+        List<String> accountList = new ArrayList<>();
+        try {
+            ResponseEntity<String[]> response = restTemplate.exchange(API_BASE_URL, HttpMethod.GET, makeAuthEntity(), String[].class);
+            accountList = Arrays.asList(response.getBody());
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return accountList;
     }
 
     public BankAccount get(Long id) {

@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JdbcBankAccountDao implements BankAccountDao {
@@ -18,6 +20,17 @@ public class JdbcBankAccountDao implements BankAccountDao {
 
     public JdbcBankAccountDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public List<String> listAccounts() {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT user_id, username FROM tenmo_user;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+        while(results.next()) {
+            list.add("User ID: " + results.getInt("user_id") + " " + "Username: " + results.getString("username"));
+        }
+        return list;
     }
 
     @Override

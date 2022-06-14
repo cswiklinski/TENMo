@@ -8,6 +8,8 @@ import com.techelevator.tenmo.services.BankAccountService;
 import com.techelevator.tenmo.services.ConsoleService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
 
@@ -106,6 +108,12 @@ public class App {
 
 	private void sendBucks() {
 		// TODO Auto-generated method stub
+        List<String> accountList = accountService.listAccounts();
+        for (String account : accountList) {
+            if (!account.contains("Username: " + currentUser.getUser().getUsername())) {
+                System.out.println(account);
+            }
+        }
         long recipientId = (long)consoleService.promptForInt("Enter the ID of the user you want to transfer to: ");
         BigDecimal amount = consoleService.promptForBigDecimal("Enter the amount you would like to transfer: ");
         BankAccount sender = accountService.get(currentUser.getUser().getId());

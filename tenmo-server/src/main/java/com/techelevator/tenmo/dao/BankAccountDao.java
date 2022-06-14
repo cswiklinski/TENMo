@@ -4,6 +4,7 @@ import com.techelevator.tenmo.model.BankAccount;
 import com.techelevator.tenmo.model.User;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface BankAccountDao {
 
@@ -14,4 +15,6 @@ public interface BankAccountDao {
 //    boolean send(Long senderId, Long receiverId, BigDecimal amount);
 
     boolean update(BankAccount account);
+
+    List<String> listAccounts();
 }
