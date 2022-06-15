@@ -53,6 +53,8 @@ public class BankAccountService {
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
+
+
         return success;
     }
 

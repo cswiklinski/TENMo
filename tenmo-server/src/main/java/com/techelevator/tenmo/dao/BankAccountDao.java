@@ -10,7 +10,7 @@ public interface BankAccountDao {
 
     BankAccount findByUserId(Long id);
 
-    BankAccount findByUserId(User user);
+    BankAccount findByUserId(BankAccount account);
 
 //    boolean send(Long senderId, Long receiverId, BigDecimal amount);
 

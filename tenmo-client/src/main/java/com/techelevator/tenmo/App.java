@@ -116,7 +116,7 @@ public class App {
         }
         long recipientId = (long)consoleService.promptForInt("Enter the ID of the user you want to transfer to: ");
         BigDecimal amount = consoleService.promptForBigDecimal("Enter the amount you would like to transfer: ");
-        BankAccount sender = accountService.get(currentUser.getUser().getId());
+        BankAccount sender = accountService.get(currentUser.getUser().getId() + 1000);
         BankAccount receiver = accountService.get(recipientId);
         if (sender.getBalance().compareTo(amount) >= 0) {
             sender.setBalance(sender.getBalance().subtract(amount));
