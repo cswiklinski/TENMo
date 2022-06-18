@@ -4,6 +4,7 @@ import com.techelevator.tenmo.dao.BankAccountDao;
 import com.techelevator.tenmo.dao.JdbcBankAccountDao;
 import com.techelevator.tenmo.model.BankAccount;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/account/")
+@PreAuthorize("isAuthenticated()")
 public class BankAccountController {
 
     RestTemplate restTemplate = new RestTemplate();

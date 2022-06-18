@@ -8,7 +8,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="m02-capstone-client" />
         <module name="m02-capstone-server" />
-        <module name="authentication-exercise-client" />
         <module name="authentication-exercise-server" />
       </profile>
     </annotationProcessing>

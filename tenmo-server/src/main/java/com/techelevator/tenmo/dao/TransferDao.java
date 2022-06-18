@@ -7,9 +7,13 @@ import java.util.List;
 
 public interface TransferDao {
 
-    boolean create(Long senderId, Long recipientId, BigDecimal amount);
+    boolean create(Transfer transfer, int transferType, int transferStatus);
 
     List<Transfer> listBySender(Long senderId);
 
     Transfer getById(Long transferId);
+
+    List<Transfer> listAllTransfers();
+
+    boolean update(Transfer transfer);
 }

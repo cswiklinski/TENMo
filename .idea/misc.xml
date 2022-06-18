@@ -5,7 +5,6 @@
       <list>
         <option value="$PROJECT_DIR$/tenmo-client/pom.xml" />
         <option value="$PROJECT_DIR$/tenmo-server/pom.xml" />
-        <option value="$PROJECT_DIR$/../cameron-almazan-student-exercises/16_Securing_APIs/exercise/client/pom.xml" />
         <option value="$PROJECT_DIR$/../cameron-almazan-student-exercises/16_Securing_APIs/exercise/server/pom.xml" />
       </list>
     </option>

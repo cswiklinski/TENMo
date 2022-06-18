@@ -26,14 +26,25 @@ public class TransferController {
         return transferDao.getById(id);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/transfer/{id}")
+    public boolean update(@RequestBody Transfer transfer) {
+        return transferDao.update(transfer);
+    }
+
+    @GetMapping("/transfers/{id}")
+    public List<Transfer> getTransfersBySender(@PathVariable Long id) {
+        return transferDao.listBySender(id);
+    }
+
     @GetMapping("/transfers")
-    public List<Transfer> getTransfersBySender(@RequestParam Long sender) {
-        return transferDao.listBySender(sender);
+    public List<Transfer> getAllTransfers() {
+        return transferDao.listAllTransfers();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/transfer")
-    public void create(@RequestParam Long sender, Long recipient, BigDecimal amount) {
-        transferDao.create(sender, recipient, amount);
+    public void create(@RequestBody Transfer transfer, @RequestParam(name = "type", required = false, defaultValue = "2") int transferType, @RequestParam(name = "status", required = false, defaultValue = "2") int transferStatus) {
+        transferDao.create(transfer, transferType, transferStatus);
     }
 }

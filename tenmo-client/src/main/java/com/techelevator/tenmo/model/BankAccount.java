@@ -7,6 +7,7 @@ public class BankAccount {
     private Long id;
     private Long userId;
     private BigDecimal balance;
+    private String username;
 
     public Long getId() {
         return id;
@@ -39,5 +40,13 @@ public class BankAccount {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

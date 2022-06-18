@@ -12,8 +12,6 @@ public interface BankAccountDao {
 
     BankAccount findByUserId(BankAccount account);
 
-//    boolean send(Long senderId, Long receiverId, BigDecimal amount);
-
     boolean update(BankAccount account);
 
     List<String> listAccounts();

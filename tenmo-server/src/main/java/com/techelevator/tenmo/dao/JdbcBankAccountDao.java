@@ -35,7 +35,7 @@ public class JdbcBankAccountDao implements BankAccountDao {
 
     @Override
     public BankAccount findByUserId(Long id) {
-        String sql = "SELECT account_id, user_id, balance FROM account WHERE account_id = ?;";
+        String sql = "SELECT account_id, user_id, balance, username FROM account JOIN tenmo_user USING (user_id) WHERE account_id = ?;";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
         if (rowSet.next()){
             return mapRowToBankAccount(rowSet);
@@ -45,7 +45,7 @@ public class JdbcBankAccountDao implements BankAccountDao {
 
     @Override
     public BankAccount findByUserId(BankAccount account) {
-        String sql = "SELECT account_id, user_id, balance FROM account WHERE account_id = ?;";
+        String sql = "SELECT account_id, user_id, balance, username FROM account JOIN tenmo_user USING (user_id) WHERE account_id = ?;";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, account.getId());
         if (rowSet.next()){
             return mapRowToBankAccount(rowSet);
@@ -64,51 +64,12 @@ public class JdbcBankAccountDao implements BankAccountDao {
         return true;
     }
 
-//    @Override
-//    public boolean send(Long senderId, Long receiverId, BigDecimal amount) {
-//        boolean success = false;
-//        String sql = "SELECT * FROM account WHERE user_id = ?;";
-//        SqlRowSet send = jdbcTemplate.queryForRowSet(sql, senderId);
-//        SqlRowSet receive = jdbcTemplate.queryForRowSet(sql, receiverId);
-//        if (send.next() && receive.next()) {
-//            BankAccount sender = mapRowToBankAccount(send);
-//            BankAccount receiver = mapRowToBankAccount(receive);
-//            if (sender.getBalance().compareTo(amount) >= 0) {
-//
-//                sql = "UPDATE account SET balance = ? WHERE user_id = ?;";
-//                sender.setBalance(sender.getBalance().subtract(amount));
-//                try {
-//                    jdbcTemplate.update(sql, sender.getBalance(), sender.getId());
-//                } catch (DataAccessException e) {
-//                    return false;
-//                }
-//
-//                sql = "UPDATE account SET balance = ? WHERE user_id = ?;";
-//                receiver.setBalance(receiver.getBalance().add(amount));
-//                try {
-//                    jdbcTemplate.update(sql, receiver.getBalance(), receiver.getId());
-//                } catch (DataAccessException e) {
-//                    return false;
-//                }
-//
-//                // create transfer in table
-//                sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) values (?, ?, ?, ?, ?)";
-//                try {
-//                    jdbcTemplate.update(sql, 2, 2, sender.getUserId(), receiver.getUserId(), amount);
-//                    success = true;
-//                } catch (DataAccessException e) {
-//                    success = false;
-//                }
-//            }
-//        }
-//        return success;
-//    }
-
     private BankAccount mapRowToBankAccount(SqlRowSet rs) {
         BankAccount bankAccount = new BankAccount();
         bankAccount.setId(rs.getLong("account_id"));
         bankAccount.setUserId(rs.getLong("user_id"));
         bankAccount.setBalance(rs.getBigDecimal("balance"));
+        bankAccount.setUsername(rs.getString("username"));
         return bankAccount;
     }
 }

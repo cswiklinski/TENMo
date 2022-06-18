@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../cameron-almazan-student-exercises/16_Securing_APIs/exercise/client/authentication-exercise-client.iml" filepath="$PROJECT_DIR$/../cameron-almazan-student-exercises/16_Securing_APIs/exercise/client/authentication-exercise-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/../cameron-almazan-student-exercises/16_Securing_APIs/exercise/server/authentication-exercise-server.iml" filepath="$PROJECT_DIR$/../cameron-almazan-student-exercises/16_Securing_APIs/exercise/server/authentication-exercise-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/tenmo-client/m02-capstone-client.iml" filepath="$PROJECT_DIR$/tenmo-client/m02-capstone-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/tenmo-server/m02-capstone-server.iml" filepath="$PROJECT_DIR$/tenmo-server/m02-capstone-server.iml" />
