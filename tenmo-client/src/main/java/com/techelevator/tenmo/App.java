@@ -74,10 +74,11 @@ public class App {
         currentUser = authenticationService.login(credentials);
         if (currentUser == null) {
             consoleService.printErrorMessage();
+        } else {
+            accountService.setAuthToken(currentUser.getToken());
+            transferService.setAuthToken(currentUser.getToken());
+            currentUserAccount = accountService.get(currentUser.getUser().getId() + 1000);
         }
-        accountService.setAuthToken(currentUser.getToken());
-        transferService.setAuthToken(currentUser.getToken());
-        currentUserAccount = accountService.get(currentUser.getUser().getId() + 1000);
     }
 
     private void mainMenu() {
@@ -105,34 +106,30 @@ public class App {
     }
 
 	private void viewCurrentBalance() {
-		// TODO Auto-generated method stub
-		System.out.println("Your current balance is: $" + accountService.get(currentUser.getUser().getId() + 1000).getBalance());
+		// displays the current user's balance by sending a GET request to retrieve the BankAccount object based on the user's ID.
+		System.out.println("Your current balance is: $" + accountService.get(currentUserAccount.getId()).getBalance());
 	}
 
 	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
+		// 
         List<Transfer> transferList = transferService.listTransfers();
+
 		for (Transfer transfer : transferList) {
             if (transfer.getToAccountID().equals(currentUserAccount.getId()) || transfer.getFromAccountID().equals(currentUserAccount.getId())) {
-                String transferStatus = null;
-                if (transfer.getTransferStatus() == STATUS_PENDING) {
-                    transferStatus = "Pending.";
-                } else if (transfer.getTransferStatus() == STATUS_APPROVED) {
-                    transferStatus = "Approved.";
-                } else if (transfer.getTransferStatus() == STATUS_REJECTED) {
-                    transferStatus = "Rejected.";
-                }
+
                 BankAccount otherUser;
                 if (currentUserAccount.getId().equals(transfer.getToAccountID())) {
                     otherUser = accountService.get(transfer.getFromAccountID());
                 } else {
                     otherUser = accountService.get(transfer.getToAccountID());
                 }
-                System.out.println("Transfer ID: " + transfer.getId() + " | Transfer Amount: $" + transfer.getAmount() + " | User: " + otherUser.getUsername());
+                
+                System.out.println("Transfer ID: " + transfer.getId() + " | Amount: $" + transfer.getAmount() + " | User: " + otherUser.getUsername());
             }
         }
 
         long transferId = consoleService.promptForInt("Enter a transfer ID to see more details, or enter 0 to exit: ");
+
         if(transferId != 0) {
             Transfer transfer = transferService.getById(transferId);
             if (transfer != null) {
@@ -146,43 +143,52 @@ public class App {
                 }
                 BankAccount recipient = accountService.get(transfer.getToAccountID());
                 BankAccount sender = accountService.get(transfer.getFromAccountID());
-                System.out.println("ID: " + transfer.getId() + ", Amount: $" + transfer.getAmount() + ", Recipient: " + recipient.getUsername() + ", Sender: " + sender.getUsername() + ", Status: " + transferStatus);
+                System.out.println("ID: " + transfer.getId() + "| Amount: $" + transfer.getAmount() + "| Recipient: " + recipient.getUsername() + "| Sender: " + sender.getUsername() + "| Status: " + transferStatus);
             } else {
                 System.out.println("Invalid transfer ID.");
             }
-        } else {
-            mainMenu();
-        }
-	}
+            } else {
+                mainMenu();
+            }
+	    }
 
 	private void viewPendingRequests() {
 		// TODO Auto-generated method stub
         List<Transfer> transferList = transferService.listTransfers();
+
         for (Transfer transfer : transferList) {
             if (transfer.getTransferStatus() == STATUS_PENDING && transfer.getFromAccountID().equals(currentUserAccount.getId())) {
                 BankAccount requester = accountService.get(transfer.getToAccountID());
                 System.out.println("Request ID: " + transfer.getId() + " | Requested Amount: $" + transfer.getAmount() + " | User: " + requester.getUsername());
             }
         }
+
         int selection = consoleService.promptForInt("Enter 1 to reject a request, 2 to approve a request, or 0 to exit: ");
+
         while(selection != 0) {
             if (selection == 1) {
+
                 long transferId = consoleService.promptForInt("Enter the ID of the request to reject: ");
                 Transfer transfer = transferService.getById(transferId);
+
                 if (transfer != null) {
                     transfer.setTransferStatus(STATUS_REJECTED);
                     transferService.update(transfer);
                 } else {
                     System.out.println("Invalid request ID.");
                 }
+
             } else if (selection == 2) {
+
                 long transferId = consoleService.promptForInt("Enter the ID of the request to approve: ");
                 Transfer transfer = transferService.getById(transferId);
+
                 if (transfer != null) {
                     BankAccount receiver = accountService.get(transfer.getToAccountID());
                     BankAccount sender = accountService.get(transfer.getFromAccountID());
 
                     if (sender.getBalance().compareTo(transfer.getAmount()) >= 0) {
+
                         sender.setBalance(sender.getBalance().subtract(transfer.getAmount()));
                         accountService.update(sender);
 
@@ -192,6 +198,7 @@ public class App {
 
                         transfer.setTransferStatus(STATUS_APPROVED);
                         transferService.update(transfer);
+
                     } else {
                         System.out.println("Insufficient funds to approve the request.");
                     }
@@ -199,6 +206,7 @@ public class App {
                 } else {
                     System.out.println("Invalid request ID.");
                 }
+
             } else {
                 selection = consoleService.promptForInt("Enter 1 to reject a request, 2 to approve a request, or 0 to exit: ");
             }
@@ -211,27 +219,36 @@ public class App {
 	private void sendBucks() {
 		// TODO Auto-generated method stub
         List<String> accountList = accountService.listAccounts();
+
         for (String account : accountList) {
             if (!account.contains("Username: " + currentUser.getUser().getUsername())) {
                 System.out.println(account);
             }
         }
+
         long recipientId = consoleService.promptForInt("Enter the ID of the account you want to transfer to: ");
+        
         if (recipientId == currentUserAccount.getId()) {
             recipientId = consoleService.promptForInt("You cannot send money to yourself. Please enter the ID of the user you want to transfer to: ");
         }
+        
         BankAccount sender = accountService.get(currentUserAccount.getId());
         BankAccount receiver = accountService.get(recipientId);
+        
         if (receiver != null) {
+
             BigDecimal amount = consoleService.promptForBigDecimal("Enter the amount you would like to transfer: ");
 
             if (amount.signum() == 1 && sender.getBalance().compareTo(amount) >= 0) {
+
                 sender.setBalance(sender.getBalance().subtract(amount));
                 accountService.update(sender);
 
                 receiver.setBalance(receiver.getBalance().add(amount));
                 accountService.update(receiver);
+
                 System.out.println("$" + amount + " sent to user " + receiver.getUsername() + ". New balance: " + sender.getBalance());
+
                 Transfer transfer = new Transfer(amount, sender.getId(), receiver.getId(), STATUS_APPROVED, TRANSFER_SEND);
                 transferService.send(transfer);
 
@@ -243,28 +260,37 @@ public class App {
         } else {
             System.out.println("Invalid Account ID.");
         }
+        
 	}
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub
         List<String> accountList = accountService.listAccounts();
+
         for (String account : accountList) {
             if (!account.contains("Username: " + currentUser.getUser().getUsername())) {
                 System.out.println(account);
             }
         }
+
         long requesteeId = (long)consoleService.promptForInt("Enter the ID of the user you want to request from: ");
+
         if (requesteeId == currentUserAccount.getId()) {
             requesteeId = consoleService.promptForInt("You cannot request money from yourself. Please enter the ID of the user you want to request money from: ");
         }
+
         BankAccount requester = accountService.get(currentUserAccount.getId());
         BankAccount requestee = accountService.get(requesteeId);
+
         if (requestee != null) {
             BigDecimal amount = consoleService.promptForBigDecimal("Enter the amount you would like to request: ");
             if (amount.signum() == 1) {
+
                 System.out.println("$" + amount + " requested from user " + requestee.getUsername() + ". Approval pending.");
+                
                 Transfer transfer = new Transfer(amount, requestee.getId(), requester.getId(), STATUS_PENDING, TRANSFER_REQUEST);
                 transferService.request(transfer);
+
             } else {
                 System.out.println("Please request an amount of money greater than $0.");
             }

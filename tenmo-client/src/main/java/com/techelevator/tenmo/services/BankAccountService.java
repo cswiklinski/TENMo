@@ -19,6 +19,7 @@ public class BankAccountService {
 
     private String authToken = null;
 
+    // set the JWT token
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
@@ -75,13 +76,14 @@ public class BankAccountService {
 //    }
 
 
+    // turns the BankAccount object passed in the arguments into the body of an HTTP request, including the JWT token in the header
     private HttpEntity<BankAccount> makeAccountEntity(BankAccount account) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(authToken);
         return new HttpEntity<>(account, headers);
     }
-
+    // includes the JWT token in the header for get requests
     private HttpEntity<Void> makeAuthEntity() {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(authToken);
