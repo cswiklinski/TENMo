@@ -117,14 +117,14 @@ public class App {
 		for (Transfer transfer : transferList) {
             if (transfer.getToAccountID().equals(currentUserAccount.getId()) || transfer.getFromAccountID().equals(currentUserAccount.getId())) {
 
-                BankAccount otherUser;
+                String fromToUser;
                 if (currentUserAccount.getId().equals(transfer.getToAccountID())) {
-                    otherUser = accountService.get(transfer.getFromAccountID());
+                    fromToUser = "From User: " + accountService.get(transfer.getFromAccountID()).getUsername;
                 } else {
-                    otherUser = accountService.get(transfer.getToAccountID());
+                    fromToUser = "To User: " + accountService.get(transfer.getToAccountID()).getUsername;
                 }
                 
-                System.out.println("Transfer ID: " + transfer.getId() + " | Amount: $" + transfer.getAmount() + " | User: " + otherUser.getUsername());
+                System.out.println("Transfer ID: " + transfer.getId() + " | Amount: $" + transfer.getAmount() + " | " + fromToUser);
             }
         }
 
@@ -135,15 +135,25 @@ public class App {
             if (transfer != null) {
                 String transferStatus = null;
                 if (transfer.getTransferStatus() == STATUS_PENDING) {
-                    transferStatus = "Pending.";
+                    transferStatus = "Pending";
                 } else if (transfer.getTransferStatus() == STATUS_APPROVED) {
-                    transferStatus = "Approved.";
+                    transferStatus = "Approved";
                 } else if (transfer.getTransferStatus() == STATUS_REJECTED) {
-                    transferStatus = "Rejected.";
+                    transferStatus = "Rejected";
                 }
+
+                String transferType = null;
+                if (transfer.getTransferType() == TRANSFER_REQUEST) {
+                    transferType == "Request"
+                } else if (transfer.getTransferType() == TRANSFER_SEND) {
+                    transferType == "Transfer"
+                }
+
                 BankAccount recipient = accountService.get(transfer.getToAccountID());
                 BankAccount sender = accountService.get(transfer.getFromAccountID());
-                System.out.println("ID: " + transfer.getId() + "| Amount: $" + transfer.getAmount() + "| Recipient: " + recipient.getUsername() + "| Sender: " + sender.getUsername() + "| Status: " + transferStatus);
+
+                System.out.println("ID: " + transfer.getId() + " | Amount: $" + transfer.getAmount() + " | Recipient: " + recipient.getUsername() + " | Sender: " + sender.getUsername() + " | Status: " + transferStatus  + " | Type: " + transferType);
+                
             } else {
                 System.out.println("Invalid transfer ID.");
             }
@@ -203,6 +213,7 @@ public class App {
                         System.out.println("Insufficient funds to approve the request.");
                     }
                     mainMenu();
+
                 } else {
                     System.out.println("Invalid request ID.");
                 }
@@ -226,39 +237,44 @@ public class App {
             }
         }
 
-        long recipientId = consoleService.promptForInt("Enter the ID of the account you want to transfer to: ");
+        long recipientId = consoleService.promptForInt("Enter the ID of the account you want to transfer to, or 0 to exit: ");
         
         if (recipientId == currentUserAccount.getId()) {
             recipientId = consoleService.promptForInt("You cannot send money to yourself. Please enter the ID of the user you want to transfer to: ");
-        }
+        } else if (recipientId != 0) {
         
-        BankAccount sender = accountService.get(currentUserAccount.getId());
-        BankAccount receiver = accountService.get(recipientId);
-        
-        if (receiver != null) {
+            BankAccount sender = accountService.get(currentUserAccount.getId());
+            BankAccount receiver = accountService.get(recipientId);
 
-            BigDecimal amount = consoleService.promptForBigDecimal("Enter the amount you would like to transfer: ");
+            if (receiver != null) {
 
-            if (amount.signum() == 1 && sender.getBalance().compareTo(amount) >= 0) {
+                BigDecimal amount = consoleService.promptForBigDecimal("Enter the amount you would like to transfer: ");
 
-                sender.setBalance(sender.getBalance().subtract(amount));
-                accountService.update(sender);
+                if (amount.signum() == 1 && sender.getBalance().compareTo(amount) >= 0) {
 
-                receiver.setBalance(receiver.getBalance().add(amount));
-                accountService.update(receiver);
+                    sender.setBalance(sender.getBalance().subtract(amount));
+                    accountService.update(sender);
 
-                System.out.println("$" + amount + " sent to user " + receiver.getUsername() + ". New balance: " + sender.getBalance());
+                    receiver.setBalance(receiver.getBalance().add(amount));
+                    accountService.update(receiver);
 
-                Transfer transfer = new Transfer(amount, sender.getId(), receiver.getId(), STATUS_APPROVED, TRANSFER_SEND);
-                transferService.send(transfer);
+                    System.out.println("$" + amount + " sent to user " + receiver.getUsername() + ". New balance: " + sender.getBalance());
 
-            } else if (amount.signum() == 0 || amount.signum() == -1) {
-                System.out.println("You cannot $0 or a negative amount.");
+                    Transfer transfer = new Transfer(amount, sender.getId(), receiver.getId(), STATUS_APPROVED, TRANSFER_SEND);
+                    transferService.send(transfer);
+
+                } else if (amount.signum() == 0 || amount.signum() == -1) {
+                    System.out.println("You cannot $0 or a negative amount.");
+                } else {
+                    System.out.println("You cannot send more money than you have in your account.");
+                }
+
             } else {
-                System.out.println("You cannot send more money than you have in your account.");
+                System.out.println("Invalid Account ID.");
             }
+
         } else {
-            System.out.println("Invalid Account ID.");
+            mainMenu();
         }
         
 	}
@@ -273,29 +289,35 @@ public class App {
             }
         }
 
-        long requesteeId = (long)consoleService.promptForInt("Enter the ID of the user you want to request from: ");
+        long requesteeId = (long)consoleService.promptForInt("Enter the ID of the user you want to request from, or 0 to exit: ");
 
         if (requesteeId == currentUserAccount.getId()) {
             requesteeId = consoleService.promptForInt("You cannot request money from yourself. Please enter the ID of the user you want to request money from: ");
-        }
+        } else if (requesteeId != 0) {
 
-        BankAccount requester = accountService.get(currentUserAccount.getId());
-        BankAccount requestee = accountService.get(requesteeId);
+            BankAccount requester = accountService.get(currentUserAccount.getId());
+            BankAccount requestee = accountService.get(requesteeId);
 
-        if (requestee != null) {
-            BigDecimal amount = consoleService.promptForBigDecimal("Enter the amount you would like to request: ");
-            if (amount.signum() == 1) {
+            if (requestee != null) {
 
-                System.out.println("$" + amount + " requested from user " + requestee.getUsername() + ". Approval pending.");
-                
-                Transfer transfer = new Transfer(amount, requestee.getId(), requester.getId(), STATUS_PENDING, TRANSFER_REQUEST);
-                transferService.request(transfer);
+                BigDecimal amount = consoleService.promptForBigDecimal("Enter the amount you would like to request: ");
+                if (amount.signum() == 1) {
+
+                    System.out.println("$" + amount + " requested from user " + requestee.getUsername() + ". Approval pending.");
+                    
+                    Transfer transfer = new Transfer(amount, requestee.getId(), requester.getId(), STATUS_PENDING, TRANSFER_REQUEST);
+                    transferService.request(transfer);
+
+                } else {
+                    System.out.println("Please request an amount of money greater than $0.");
+                }
 
             } else {
-                System.out.println("Please request an amount of money greater than $0.");
+                System.out.println("Invalid Account ID.");
             }
+
         } else {
-            System.out.println("Invalid Account ID.");
+            mainMenu();
         }
 	}
 
