@@ -119,9 +119,9 @@ public class App {
 
                 String fromToUser;
                 if (currentUserAccount.getId().equals(transfer.getToAccountID())) {
-                    fromToUser = "From User: " + accountService.get(transfer.getFromAccountID()).getUsername;
+                    fromToUser = "From User: " + accountService.get(transfer.getFromAccountID()).getUsername();
                 } else {
-                    fromToUser = "To User: " + accountService.get(transfer.getToAccountID()).getUsername;
+                    fromToUser = "To User: " + accountService.get(transfer.getToAccountID()).getUsername();
                 }
                 
                 System.out.println("Transfer ID: " + transfer.getId() + " | Amount: $" + transfer.getAmount() + " | " + fromToUser);
@@ -144,9 +144,9 @@ public class App {
 
                 String transferType = null;
                 if (transfer.getTransferType() == TRANSFER_REQUEST) {
-                    transferType == "Request"
+                    transferType = "Request";
                 } else if (transfer.getTransferType() == TRANSFER_SEND) {
-                    transferType == "Transfer"
+                    transferType = "Transfer";
                 }
 
                 BankAccount recipient = accountService.get(transfer.getToAccountID());
