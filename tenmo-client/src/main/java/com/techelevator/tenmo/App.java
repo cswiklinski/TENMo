@@ -111,7 +111,6 @@ public class App {
 	}
 
 	private void viewTransferHistory() {
-		// 
         List<Transfer> transferList = transferService.listTransfers();
 
 		for (Transfer transfer : transferList) {
@@ -184,8 +183,13 @@ public class App {
                 if (transfer != null) {
                     transfer.setTransferStatus(STATUS_REJECTED);
                     transferService.update(transfer);
+                    System.out.println("Request rejected.");
+                    selection=0;
+                    mainMenu();
                 } else {
                     System.out.println("Invalid request ID.");
+                    selection=0;
+                    mainMenu();
                 }
 
             } else if (selection == 2) {
@@ -212,10 +216,13 @@ public class App {
                     } else {
                         System.out.println("Insufficient funds to approve the request.");
                     }
+                    selection=0;
                     mainMenu();
 
                 } else {
                     System.out.println("Invalid request ID.");
+                    selection=0;
+                    mainMenu();
                 }
 
             } else {
