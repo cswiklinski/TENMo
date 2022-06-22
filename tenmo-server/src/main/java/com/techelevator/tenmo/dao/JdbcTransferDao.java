@@ -21,9 +21,11 @@ public class JdbcTransferDao implements TransferDao {
 
     @Override
     public boolean create(Transfer transfer, int transferType, int transferStatus) {
-        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) values(?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                "values(?, ?, ?, ?, ?);";
         try {
-            jdbcTemplate.update(sql, transferType, transferStatus, transfer.getFromAccountID(), transfer.getToAccountID(), transfer.getAmount());
+            jdbcTemplate.update(sql, transferType, transferStatus, transfer.getFromAccountID(),
+                    transfer.getToAccountID(), transfer.getAmount());
             return true;
         } catch (DataAccessException e) {
             return false;
@@ -45,10 +47,7 @@ public class JdbcTransferDao implements TransferDao {
     public Transfer getById(Long transferId) {
         String sql = "SELECT * FROM transfer WHERE transfer_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferId);
-        if (results.next()) {
-            return mapRowToTransfer(results);
-        }
-        return null;
+        return mapRowToTransfer(results);
     }
 
     public boolean update(Transfer transfer) {

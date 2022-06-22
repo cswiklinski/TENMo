@@ -45,7 +45,9 @@ public class TransferController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/transfer")
-    public void create(@RequestBody Transfer transfer, @RequestParam(name = "type", required = false, defaultValue = "2") int transferType, @RequestParam(name = "status", required = false, defaultValue = "2") int transferStatus) {
+    public void create(@RequestBody Transfer transfer,
+                       @RequestParam(name = "type", required = false, defaultValue = "2") int transferType,
+                       @RequestParam(name = "status", required = false, defaultValue = "2") int transferStatus) {
         transferDao.create(transfer, transferType, transferStatus);
     }
 }

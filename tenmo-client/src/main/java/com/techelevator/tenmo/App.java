@@ -104,26 +104,32 @@ public class App {
             consoleService.pause();
         }
     }
-
+    // displays the current user's balance by sending a GET request to retrieve the BankAccount object based on the user's ID.
 	private void viewCurrentBalance() {
-		// displays the current user's balance by sending a GET request to retrieve the BankAccount object based on the user's ID.
-		System.out.println("Your current balance is: $" + accountService.get(currentUserAccount.getId()).getBalance());
+		System.out.println("Your current balance is: $" +
+                accountService.get(currentUserAccount.getId()).getBalance());
 	}
 
 	private void viewTransferHistory() {
         List<Transfer> transferList = transferService.listTransfers();
 
 		for (Transfer transfer : transferList) {
-            if (transfer.getToAccountID().equals(currentUserAccount.getId()) || transfer.getFromAccountID().equals(currentUserAccount.getId())) {
+            if (transfer.getToAccountID().equals(currentUserAccount.getId()) ||
+                    transfer.getFromAccountID().equals(currentUserAccount.getId())) {
 
                 String fromToUser;
                 if (currentUserAccount.getId().equals(transfer.getToAccountID())) {
-                    fromToUser = "From User: " + accountService.get(transfer.getFromAccountID()).getUsername();
+                    fromToUser = "From User: " +
+                            accountService.get(transfer.getFromAccountID()).getUsername();
                 } else {
-                    fromToUser = "To User: " + accountService.get(transfer.getToAccountID()).getUsername();
+                    fromToUser = "To User: " +
+                            accountService.get(transfer.getToAccountID()).getUsername();
                 }
                 
-                System.out.println("Transfer ID: " + transfer.getId() + " | Amount: $" + transfer.getAmount() + " | " + fromToUser);
+                System.out.println("Transfer ID: " + transfer.getId() +
+                        " | Amount: $" + transfer.getAmount() +
+                        " | " + fromToUser);
+
             }
         }
 
@@ -184,13 +190,11 @@ public class App {
                     transfer.setTransferStatus(STATUS_REJECTED);
                     transferService.update(transfer);
                     System.out.println("Request rejected.");
-                    selection=0;
-                    mainMenu();
                 } else {
                     System.out.println("Invalid request ID.");
-                    selection=0;
-                    mainMenu();
                 }
+                selection=0;
+                mainMenu();
 
             } else if (selection == 2) {
 
@@ -216,14 +220,12 @@ public class App {
                     } else {
                         System.out.println("Insufficient funds to approve the request.");
                     }
-                    selection=0;
-                    mainMenu();
 
                 } else {
                     System.out.println("Invalid request ID.");
-                    selection=0;
-                    mainMenu();
                 }
+                selection=0;
+                mainMenu();
 
             } else {
                 selection = consoleService.promptForInt("Enter 1 to reject a request, 2 to approve a request, or 0 to exit: ");

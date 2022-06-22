@@ -38,7 +38,8 @@ public class BankAccountService {
     public BankAccount get(Long id) {
         BankAccount account = null;
         try {
-            ResponseEntity<BankAccount> response = restTemplate.exchange(API_BASE_URL + id, HttpMethod.GET, makeAuthEntity(), BankAccount.class);
+            ResponseEntity<BankAccount> response =
+                    restTemplate.exchange(API_BASE_URL + id, HttpMethod.GET, makeAuthEntity(), BankAccount.class);
             account = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -54,8 +55,6 @@ public class BankAccountService {
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
-
-
         return success;
     }
 
