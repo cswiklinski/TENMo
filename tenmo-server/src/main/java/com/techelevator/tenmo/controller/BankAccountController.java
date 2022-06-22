@@ -40,11 +40,4 @@ public class BankAccountController {
         return account;
     }
 
-//    @ResponseStatus(HttpStatus.OK)
-//    @PutMapping("{id}/transfer")
-//    public boolean transfer(@PathVariable Long id,
-//                            @RequestParam(name = "recipient", required = true) Long recipientId,
-//                            @RequestParam(name="amount", defaultValue="0")BigDecimal amount) {
-//        return accountDao.send(id, recipientId, amount);
-//    }
 }

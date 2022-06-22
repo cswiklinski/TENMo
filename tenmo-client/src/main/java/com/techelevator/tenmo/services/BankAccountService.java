@@ -59,23 +59,6 @@ public class BankAccountService {
         return success;
     }
 
-//    public boolean transfer(Long id, Long recipientId, BigDecimal amount) {
-//        boolean success = false;
-//        try {
-//            ResponseEntity<BankAccount> response = restTemplate.exchange(API_BASE_URL + id, HttpMethod.GET, makeAuthEntity(), BankAccount.class);
-//        } catch (RestClientResponseException | ResourceAccessException e) {
-//            BasicLogger.log(e.getMessage());
-//        }
-//        try {
-//            restTemplate.put(API_BASE_URL + id + "/transfer?recipient=" + recipientId + "&amount=" + amount, HttpMethod.PUT, makeAuthEntity(), Void.class);
-//            success = true;
-//        } catch (RestClientResponseException | ResourceAccessException e) {
-//            BasicLogger.log(e.getMessage());
-//        }
-//        return success;
-//    }
-
-
     // turns the BankAccount object passed in the arguments into the body of an HTTP request, including the JWT token in the header
     private HttpEntity<BankAccount> makeAccountEntity(BankAccount account) {
         HttpHeaders headers = new HttpHeaders();
@@ -83,6 +66,7 @@ public class BankAccountService {
         headers.setBearerAuth(authToken);
         return new HttpEntity<>(account, headers);
     }
+
     // includes the JWT token in the header for get requests
     private HttpEntity<Void> makeAuthEntity() {
         HttpHeaders headers = new HttpHeaders();
