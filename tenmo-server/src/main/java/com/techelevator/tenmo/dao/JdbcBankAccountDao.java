@@ -38,7 +38,10 @@ public class JdbcBankAccountDao implements BankAccountDao {
         String sql = "SELECT account_id, user_id, balance, username FROM account " +
                 "JOIN tenmo_user USING (user_id) WHERE account_id = ?;";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
-        return mapRowToBankAccount(rowSet);
+        if (rowSet.next()){
+            return mapRowToBankAccount(rowSet);
+        }
+        throw new UsernameNotFoundException("User " + id + " was not found.");
     }
 
     @Override
@@ -46,7 +49,13 @@ public class JdbcBankAccountDao implements BankAccountDao {
         String sql = "SELECT account_id, user_id, balance, username FROM account " +
                 "JOIN tenmo_user USING (user_id) WHERE account_id = ?;";
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, account.getId());
-        return mapRowToBankAccount(rowSet);
+        if (rowSet.next()){
+            return mapRowToBankAccount(rowSet);
+        }
+        if (rowSet.next()){
+            return mapRowToBankAccount(rowSet);
+        }
+        throw new UsernameNotFoundException("User " + account.getId() + " was not found.");
     }
 
     @Override
